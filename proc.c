@@ -126,6 +126,7 @@ void printrunqueue(void) {
   cprintf("\n");
 }
 
+// must acquire rq->lock
 struct proc *pop_rq_arg(struct runqueue *rq) {
   if (rq->size == 0) {
     /* cprintf("(pid %d)", myproc()->pid); */
@@ -166,6 +167,7 @@ void push_rq(struct proc *p) {
   release(&rq->lock);
 }
 
+// must acquire ptable.lock and rq->lock
 void push_rq_arg(struct runqueue *rq, struct proc *p) {
   struct proc *head      = &rq->head;
   struct proc *tail      = rq->head.prev;
@@ -199,8 +201,9 @@ void writelog(int pid, char *pname, char event_name, int prev_pstate,
               int next_pstate) {
   struct clock cl;
 
-  // wait until all processes are forked
   if (finished_fork && !mystrcmp(pname, "bufwrite") && pid != -1) {
+    /* if (finished_fork && (!mystrcmp(pname, "bufwrite") || !mystrcmp(pname,
+     * "test"))) { */
     /* if (!mystrcmp(pname, "bufwrite") && pid != -1) { */
     /* if (!mystrcmp(pname, "bufwrite") && ptable.proc[2].state == SLEEPING) {
      */
@@ -400,9 +403,11 @@ int fork(void) {
     if (target == NULL)
       panic("target not exist");
 
+    /* acquire(&ptable.lock); */
     acquire(&target->lock);
     push_rq_arg(target, np);
     release(&target->lock);
+    /* release(&ptable.lock); */
 
     /* acquire(&runqueue[0].lock); */
     /* push_rq_arg(&runqueue[0], np); */
@@ -580,7 +585,9 @@ void work_steal(struct runqueue *cur_rq) {
     if (p_popped == 0)
       panic("test");
 
+    /* acquire(&ptable.lock); */
     push_rq_arg(cur_rq, p_popped);
+    /* release(&ptable.lock); */
   }
   /* else { */
   /*   cprintf("\nstrictly speaking, it's not work conserving!\n"); */
