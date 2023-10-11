@@ -233,3 +233,7 @@ bufwrite system call で記録されたログを print する
 
 ### 10/11
 - 論文のタイトルと概要の暫定版を作成
+- xv6 の起動を virsh に変更
++ 使い方が難しくてよく分からない
+- cpu 時間割り当ての割合をグラフとして出力するスクリプトを追加
++ round robin, multiple runqueue ともに概ね fair であることを確認した
