@@ -1,0 +1,17 @@
+<domain type='kvm'>
+  <name>xv6</name>
+	<memory unit='KiB'>102400</memory>
+	<vcpu placement='static'>1</vcpu>
+	<os>
+	  <type arch='x86_64' machine='pc-i440fx-2.11'>hvm</type>
+		<bool dev='hd'/>
+  </os>
+	<devices>
+	  <disk type ='file' device='disk'>
+		  <driver name='qemu' type='raw'/>
+			<source file='/home/waka/research/b4_research/xv6.img'/>
+			<target dev='hda' bus='ide'/>
+			<address type='drive' controller='0' bus='0' unit='0'/>
+		</disk>
+  </devices>
+</domain>
