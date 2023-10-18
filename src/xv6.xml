@@ -1,17 +1,32 @@
-<domain type='kvm'>
-  <name>xv6</name>
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0' >
+  <qemu:commandline>
+			<qemu:arg value='-s'/>
+  </qemu:commandline>
+  <name>xv6-12</name>
 	<memory unit='KiB'>102400</memory>
 	<vcpu placement='static'>1</vcpu>
 	<os>
-	  <type arch='x86_64' machine='pc-i440fx-2.11'>hvm</type>
+	  <type arch='i686' machine='pc-i440fx-2.11'>hvm</type>
 		<bool dev='hd'/>
   </os>
 	<devices>
-	  <disk type ='file' device='disk'>
+	  <disk type='file' device='disk'>
 		  <driver name='qemu' type='raw'/>
-			<source file='/home/waka/research/b4_research/xv6.img'/>
+			<source file='/home/waka/research/b4_research/src/fs.img'/>
 			<target dev='hda' bus='ide'/>
+			<address type='drive' controller='0' bus='1' unit='0'/>
+		</disk>
+	  <disk type='file' device='disk'>
+		  <driver name='qemu' type='raw'/>
+			<source file='/home/waka/research/b4_research/src/xv6.img'/>
+			<target dev='hdb' bus='ide'/>
 			<address type='drive' controller='0' bus='0' unit='0'/>
 		</disk>
+		<serial type='pty'>
+			<target port='0'/>
+		</serial>
+		<console type='pty'>
+			<target type='serial' port='0'/>
+		</console>
   </devices>
 </domain>

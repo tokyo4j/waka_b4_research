@@ -123,10 +123,7 @@ int wait(void);
 void wakeup(void*);
 void yield(void);
 
-void boost_prio(void); // added
-void push_rq(struct proc*);
 void runqueueinit(void);
-void printrunqueue(void);
 
 // swtch.S
 void swtch(struct context**, struct context*);

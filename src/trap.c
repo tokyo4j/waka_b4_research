@@ -14,8 +14,6 @@ extern uint vectors[]; // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
 
-int boost_cnt; // added
-
 void tvinit(void) {
   int i;
 
@@ -104,12 +102,6 @@ void trap(struct trapframe *tf) {
   // If interrupts were on while locks held, would need to check nlock.
   if (myproc() && myproc()->state == RUNNING &&
       tf->trapno == T_IRQ0 + IRQ_TIMER) {
-    // added
-    // priority boost
-    if (ticks % 10 == 0 && IS_BOOST_PRIORITY) {
-      boost_prio();
-    }
-
     yield();
   }
 
