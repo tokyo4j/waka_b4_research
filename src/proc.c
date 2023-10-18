@@ -7,10 +7,6 @@
 #include "proc.h"
 #include "spinlock.h"
 
-struct schedlog buf_log[BUFSIZE];
-struct clock clock_log[NPROC][3];
-struct clock end_clock;
-
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -30,9 +26,12 @@ struct runqueue {
 int nextpid       = 1;
 int finished_fork = 0;
 int isnot_first_running[NPROC];
+struct clock end_clock;
 struct runqueue runqueue[NCPU];
 struct proc head[NCPU];
 static struct proc *initproc;
+struct schedlog buf_log[BUFSIZE];
+struct clock clock_log[NPROC][3];
 
 extern void forkret(void);
 extern void trapret(void);
@@ -332,6 +331,14 @@ int fork(void) {
 
   pid = np->pid;
 
+  clock_log[np->pid][0] = rdtsc();
+
+  writelog(-1, "test", PTABLE_LOCK, RELEASED, ACQUIRED);
+  acquire(&ptable.lock);
+
+  writelog(np->pid, np->name, FORK, np->state, RUNNABLE);
+  np->state = RUNNABLE;
+
   // enqueue
   if (IS_MULTIPLE_RUNQUEUE) {
     // seek small runqueue
@@ -348,20 +355,10 @@ int fork(void) {
     if (target == NULL)
       panic("target not exist");
 
-    /* acquire(&ptable.lock); */
     acquire(&target->lock);
     enqueue(target, np);
     release(&target->lock);
-    /* release(&ptable.lock); */
   }
-
-  clock_log[np->pid][0] = rdtsc();
-
-  writelog(-1, "test", PTABLE_LOCK, RELEASED, ACQUIRED);
-  acquire(&ptable.lock);
-
-  writelog(np->pid, np->name, FORK, np->state, RUNNABLE);
-  np->state = RUNNABLE;
 
   release(&ptable.lock);
   writelog(-1, "test", PTABLE_LOCK, ACQUIRED, RELEASED);
@@ -499,9 +496,9 @@ void work_steal(struct runqueue *cur_rq) {
     if (p_popped == 0)
       panic("test");
 
-    /* acquire(&ptable.lock); */
+    acquire(&ptable.lock);
     enqueue(cur_rq, p_popped);
-    /* release(&ptable.lock); */
+    release(&ptable.lock);
   }
   release(&steal_target->lock);
 }

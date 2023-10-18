@@ -1,5 +1,8 @@
+// you can enable only one of them
+#define IS_MULTIPLE_RUNQUEUE 1
+#define IS_ROUNDROBIN 0
+
 // Per-CPU state
-#include <stdint.h>
 struct cpu {
   uchar apicid;              // Local APIC ID
   struct context *scheduler; // swtch() here to enter scheduler
@@ -86,13 +89,6 @@ enum events {
   PTABLE_LOCK,
   RUNQUEUE_LOCK
 };
-
-// you can enable only one of them
-#define IS_MULTIPLE_RUNQUEUE 1
-#define IS_ROUNDROBIN 0
-
-#define IS_BOOST_PRIORITY 0
-#define MAX_PRIO 100
 
 struct schedlog {
   struct clock clock;
