@@ -162,9 +162,9 @@ void writelog(int pid, char *pname, char event_name, int prev_pstate,
     struct clock cl = rdtsc();
     end_clock       = cl;
 
-    acquire(&bufsize.lock);
+    /* acquire(&bufsize.lock); */
     if (bufsize.value >= BUFSIZE) {
-      release(&bufsize.lock);
+      /* release(&bufsize.lock); */
       return;
     }
     bufsize.value++;
@@ -176,7 +176,7 @@ void writelog(int pid, char *pname, char event_name, int prev_pstate,
     buf_log[bufsize.value].cpu         = mycpuid();
     for (int i = 0; i < 16; i++)
       buf_log[bufsize.value].name[i] = pname[i];
-    release(&bufsize.lock);
+    /* release(&bufsize.lock); */
   }
 }
 

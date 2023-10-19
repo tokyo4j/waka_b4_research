@@ -1,6 +1,6 @@
 // you can enable only one of them
-#define IS_MULTIPLE_RUNQUEUE 1
-#define IS_ROUNDROBIN 0
+#define IS_MULTIPLE_RUNQUEUE 0
+#define IS_ROUNDROBIN 1
 
 // Per-CPU state
 struct cpu {
