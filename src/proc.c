@@ -45,7 +45,7 @@ extern void forkret(void);
 extern void trapret(void);
 static void wakeup1(void *chan);
 
-inline struct clock rdtsc(void) {
+inline static struct clock rdtsc(void) {
   unsigned int lo, hi;
   struct clock c;
   __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
